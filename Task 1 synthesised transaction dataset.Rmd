@@ -1,0 +1,57 @@
+---
+title: "Untitled"
+author: "Pat Healy"
+date: "16 July 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Load the transaction dataset
+Saved as a csv in libre office (utf-8 format) before loading into R so that Data table can be used for faster processing of the data. Required Package 'data.table'
+```{r}
+library(data.table)
+df <- read.csv("ANZ.csv")
+```
+
+
+##Basic checks for missingness
+required package 'visdat' and 'naniar' to look at missing data
+```{r}
+library(naniar)
+library(visdat)
+```
+```{r}
+#Provide information about the type of data in each column. DOes the data need to be cleaned. 
+vis_dat(df)
+```
+
+We have a number of columns with empty cells. We want to turn these into NA so that we can easily show that they are missing. 
+```{r}
+df <- df %>% replace_with_na_all(condition = ~.x == "")
+```
+
+Visualisethe missing data.
+```{r}
+vis_miss(df)
+```
+
+Findings. 
+1)We can see that when there is no card_present_flag the transaction isn't processed through a merchant, therefore we have no merchant_id, merchant_suburb or merchant_state. If we want to look at location then keep this in mind and filter out the data.
+2)We only have a merchant_code for when there is bpay_biller_code present. 
+
+Conclusion. The data needs to be cleaned iff we want to analyse location or Bpay transactions. 
+
+
+
+##Gather some interesting overall insights about the data. For example -- what is the average transaction amount? How many transactions do customers make each month, on average?
+
+
+Segment the dataset by transaction date and time. Visualise transaction volume and spending over the course of an average day or week. Consider the effect of any outliers that may distort your analysis.
+
+
+For a challenge – what insights can you draw from the location information provided in the dataset?
+
+Put together 2-3 slides summarising your most interesting findings to ANZ management.
